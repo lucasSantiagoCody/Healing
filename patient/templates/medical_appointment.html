@@ -1,0 +1,103 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block 'title' %}Medical appointment{% endblock 'title' %}
+{% block 'head' %}
+<link rel="stylesheet" href="{% static 'doctor/css/open_schedules.css' %}">
+<link rel="stylesheet" href="{% static 'account/css/account.css' %}">
+<link rel="stylesheet" href="{% static 'doctor/css/register_doctor.css' %}">
+<link rel="stylesheet" href="{% static 'patient/css/home.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'patient/css/agendar_horario.css' %}"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock 'head' %}
+{% block 'content' %}
+{% include "partials/navbar.html" %}
+<br><br>
+<div class="container">
+
+    {% if medical_appointment.status == 'cancelled' %}
+        <div class="alert alert-danger mb-4" role="alert">
+            Consulta cancelada
+        </div>
+    {% endif %}
+
+    {% if medical_appointment.status == 'completed' %}
+            <div class="alert alert-success mb-4" role="alert">
+                Consulta Finalizada
+            </div>
+    {% endif %}
+    
+    {% if medical_appointment.status == 'started'%}
+            <div class="alert alert-primary mb-4" role="alert">
+                Consulta inicializada, acesse o link imediatamente!
+            </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-3"><img src="{{doctor_data.profile_picture.url}}" class="foto-perfil-card-lg" alt=""></div>
+                <div class="col-md">
+                    <p style="font-size: 20px" class="p-bold">Dr(a). {{doctor_data.doctor_name}} <i
+                            class="bi bi-patch-check-fill icon-main"></i></p>
+                    <p>{{doctor_data.description}}</p>
+                    <p class="p-bold">{{medical_appointment.open_date.date}}</p>
+                </div>
+                <div>
+                    {% if  medical_appointment.status != 'completed' and medical_appointment.status != 'cancelled'  %}
+                        <a href="{% url 'cancel-medical-appointment-view' medical_appointment.id %}">
+                            <button class="btn btn-danger">Cancelar consulta</button>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+            <br>
+            <div class="row">
+                <div class="col-md">
+                    <p><i class="color-dark bi bi-check-circle-fill"></i> Consulta agendada</p>
+                </div>
+                <div class="col-md">
+                    <p><i class="{% if medical_appointment.status == 'completed' %}color-dark{% endif %}
+                        bi bi-check-circle-fill"></i> Consulta realizada</p>
+                </div>
+                <div class="col-md">
+                    <p><i class="bi bi-check-circle-fill"></i> Consulta Avaliada</p>
+                </div>
+            </div>
+            <hr>
+            <h3 class="p-bold">Detalhes da consulta</h3>
+            <p style="font-size:20px"><i class="bi bi-calendar3 color-dark"></i>&nbsp {{medical_appointment.open_date.date}}</p>
+            <p style="font-size:20px"><i class="bi bi-tag-fill color-dark"></i></i>&nbsp R$
+                {{doctor_data.consultation_fee}}</p>
+            <a style="cursor: auto;" class="btn btn-dark-color-outline btn-lg">Adicione em seu calendário!</a>
+            <hr>
+            <h3 class="p-bold">Como acessar ?</h3>
+            <p>No horário da consulta acesse o link disponível abaixo</p>
+            
+            {% if medical_appointment.status == 'started' and medical_appointment.link %}
+                <a href="{{medical_appointment.link}}" class="btn btn-success btn-dark-color btn-lg" >Acessar consulta</a>
+            {% else %}
+                <a href="#" class="btn btn-success btn-dark-color btn-lg disabled" >Acessar consulta</a>
+            {% endif %}
+
+            <hr>
+            <h3 class="p-bold">Meus documentos</h3>
+            {% for document in documents %}
+                <a href="{{document.document.url}}" class="link documentos ">
+                    <i class="bi bi-file-arrow-down"></i>
+                     {{document.title}} - {{document.medical_appointment.open_date.date.year}}
+                </a>
+                <br><br><br>
+                
+            {% endfor %}
+            <br>
+
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div class="col-md"></div>
+    </div>
+
+</div>
+{% endblock 'content' %}

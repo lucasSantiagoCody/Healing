@@ -1,0 +1,80 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block 'title' %}Choose Time{% endblock 'title' %}
+{% block 'head' %}
+
+    <link rel="stylesheet" href="{% static 'doctor/css/open_schedules.css' %}">
+    <link rel="stylesheet" href="{% static 'account/css/account.css' %}">
+    <link rel="stylesheet" href="{% static 'doctor/css/register_doctor.css' %}">
+    <link rel="stylesheet" href="{% static 'patient/css/home.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+{% endblock 'head' %}
+
+
+{% block 'content' %}
+{% include "partials/navbar.html" %}
+
+    <div class="container">
+        <br><br>
+
+        <div class="row">
+            <div class="col-md-8">
+
+                <div class="row">
+                    <div class="col-md-3"><img src="{{doctor.profile_picture.url}}" class="foto-perfil-card" alt=""></div>
+                    <div class="col-md">
+                        <p style="font-size: 20px" class="p-bold">Dr(a). {{doctor.doctor_name}} <i class="bi bi-patch-check-fill icon-main"></i></p>
+                        <p>{{doctor.description}}</p>
+                    </div>
+                </div> 
+                <br>
+                {% if messages %}
+                    <br>
+                    {% for message in messages %}
+                        <section class="alert {{message.tags}}">
+                            {{message}}
+                        </section>
+                    {% endfor %}
+                {% endif %}
+                
+                <hr>
+                    
+            
+                <div class="row">
+                    
+                    {% for open_schedule in open_schedules %}
+                        <div class="col-md-3">
+                            <a class="link" href="{% url 'schedule-appointment-view' open_schedule.id %}">
+                            <div class='selecionar-dia'>
+                                <div class="header-dias">
+                                <span class="mes">
+                                    <!-- #TODO transformar as data que estão em numero para as respectivas palavras usar template filters -->
+                                    {{open_schedule.date.month}}
+                                </span>
+                                
+                                <span class="dia-semana">
+                                    {{open_schedule.date.weekday}}
+                                </span>
+                                </div>
+
+                                <div class="conteudo-data">
+                                {{open_schedule.date}}
+                                </div>
+                            </div>
+                            </a>
+                            <br>
+                        </div>
+                    {% endfor %}
+                   
+                    
+                </div>
+
+            </div>
+            <div class="col-md-4">
+
+            </div>
+        </div>
+
+    </div>
+{% endblock 'content' %}

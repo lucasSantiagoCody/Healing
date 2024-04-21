@@ -1,0 +1,112 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block 'title' %}Medical appointment D. Area{% endblock 'title' %}
+{% block 'head' %}
+<link rel="stylesheet" href="{% static 'doctor/css/abrir_horario.css' %}">
+<link rel="stylesheet" href="{% static 'account/css/account.css' %}">
+<link rel="stylesheet" href="{% static 'doctor/css/cadastro_medico.css' %}">
+<link rel="stylesheet" href="{% static 'patient/css/home.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock 'head' %}
+{% block 'content' %}
+{% include "partials/navbar.html" %}
+<br><br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% if medical_appointment.status == 'cancelled' %}
+            <div class="alert alert-danger" role="alert">
+                Consulta cancelada
+            </div>
+            {% elif medical_appointment.status == 'completed' %}
+            <div class="alert alert-success" role="alert">
+                Consulta Finalizada
+            </div>
+            {% elif medical_appointment.status == 'started' %}
+            <div class="alert alert-primary" role="alert">
+                Consulta inicializada, acesse o link imediatamente!
+            </div>
+            {% endif %}
+            {% if messages %}
+            <br>
+            {% for message in messages %}
+            <section class="alert {{message.tags}}">
+                {{message}}
+            </section>
+            {% endfor %}
+            {% endif %}
+            <div class="row">
+                <div class="col-md">
+                    <p style="font-size: 20px" class="p-bold">Paciente {{medical_appointment.patient.username}} <i
+                            class="bi bi-patch-check-fill icon-main"></i></p>
+                    <p>{{doctor_data.description}}</p>
+                    <p class="p-bold">{{medical_appointment.open_date.date}}</p>
+                </div>
+            </div>
+            <hr>
+            <br>
+            <div class="row">
+                <div class="col-md">
+
+                    <p><i class="color-dark bi bi-check-circle-fill"></i> Consulta agendada</p>
+                </div>
+                <div class="col-md">
+                    <p><i class="{% if medical_appointment.status == 'completed' %}color-dark{% endif %} bi bi-check-circle-fill"></i>
+                        Consulta realizada</p>
+                </div>
+                <div class="col-md">
+                    <p><i class="bi bi-check-circle-fill"></i> Consulta Avaliada</p>
+                </div>
+            </div>
+            <hr>
+            <h3 class="p-bold">Detalhes da consulta</h3>
+            <p style="font-size:20px"><i class="bi bi-calendar3 color-dark"></i>&nbsp {{medical_appointment.open_date.date}}</p>
+            <a style="cursor: auto;" class="btn btn-dark-color-outline btn-lg">Adicione em seu calendário!</a>
+            <hr>
+            <h3 class="p-bold">Como acessar ?</h3>
+            <p>Adicione o link do google meet para iniciar a consulta</p>
+            <form action="{% url 'medical-appointment-doctor-area-view' medical_appointment.id %}" method="POST">{% csrf_token %}
+                <input type="text" name="link" class="form-control shadow-main-color" id="" placeholder="Link ..."
+                    value="">
+                <br>
+                <input type="submit" class="btn btn-success btn-dark-color btn-lg">
+            </form>
+
+
+
+            <hr>
+
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div class="col-md">
+            <h3 class="p-bold">Documentos do paciente</h3>
+            <form action="{% url 'add-document-view' medical_appointment.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" name="title" class="form-control" placeholder="Titulo ...">
+                <br>
+                <input type="file" name="document" class="form-control">
+                <br>
+                <input type="submit" class="btn btn-dark-color-outline btn-lg" value="+">
+            </form>
+            <hr>
+            <br>
+            {% for document in documents %}
+                <a href="{{document.document.url}}" class="link documentos ">
+                    <i class="bi bi-file-arrow-down"></i>
+                     {{document.title}} - {{document.medical_appointment.open_date.date.year}}
+                </a>
+                <br><br><br>
+                
+            {% endfor %}
+            <br>
+
+            <hr>
+            <a href="{% url 'complete-medical-appointment-view' medical_appointment.id %}" class="btn btn-primary">Finalizar consulta</a>
+        </div>
+    </div>
+
+</div>
+{% endblock 'content' %}
