@@ -1,31 +1,34 @@
 from .models import CustomUser
 from django.contrib import messages
 from django.contrib.messages import constants
+import re
 
-def validate(data):
+
+def validate_signup_request_data(request):
+    data = request.POST
     email = data['email'].strip()
     username = data['username'].strip()
     password = data['password'].strip()
     confirm_password = data['password_confirm'].strip()
-    exceptions = []
-
-
+    validation_errors = []
+    valid_email = "r[1]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+    
     if not email:
-        exceptions.append('The E-mail field should not be empty')
+        validation_errors.append('The E-mail field should not be empty')
+    if not re.serach(valid_email, email):
+        validation_errors.append('This E-mail is invalid!')
     if not username:
-        exceptions.append('The username field should not be empty')
+        validation_errors.append('The username field should not be empty')
     if confirm_password != password:
-        exceptions.append("The passwords didn't match")
+        validation_errors.append("The passwords didn't match")
     if len(password) < 6:
-        exceptions.append('Password too weak, min 6 chacaracters')
+        validation_errors.append('Password too weak, min 6 chacaracters')
 
     verify_user_exists = CustomUser.objects.filter(email=email)
+
     if verify_user_exists.exists():
-        exceptions.append('That E-mail is already taken')
+        validation_errors.append('That E-mail is already taken')
 
-    exceptions_and_data = {
-        'exceptions': exceptions or None,
-        'validated_data': data
-    }
-
-    return exceptions_and_data
+    
+    if validation_errors:
+        return validation_errors

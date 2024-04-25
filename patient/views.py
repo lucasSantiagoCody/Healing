@@ -1,16 +1,20 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from doctor.models import DoctorData, Specialty, OpenDate
+from doctor.models import Doctor, Specialty, OpenDate
 from .models import MedicalAppointment
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.messages import constants
 from doctor.validations import is_doctor
+from django.contrib.auth.decorators import login_required
 
+
+
+@login_required
 def home(request):
 
     if request.method == 'GET':
-        doctors = DoctorData.objects.all()
+        doctors = Doctor.objects.all()
         specialties = Specialty.objects.all()
         filter_doctor = request.GET.get('doctor_name')
         filter_specialties = request.GET.getlist('specialty')
@@ -27,11 +31,11 @@ def home(request):
             'is_doctor': is_doctor(request.user)
         })
     
-
+@login_required
 def choose_time(request, id_doctor):
     
     if request.method == 'GET':
-        doctor = DoctorData.objects.get(id=id_doctor)
+        doctor = Doctor.objects.get(id=id_doctor)
         open_schedules = OpenDate.objects.filter(user=request.user).filter(date__gte=datetime.now()).filter(scheduled=False)
         return render(request, 'choose_time.html', {
             'doctor': doctor, 
@@ -40,7 +44,7 @@ def choose_time(request, id_doctor):
             })
         
 
-
+@login_required
 def schedule_appointment(request, id_open_date):
     if request.method == 'GET':
         open_date = OpenDate.objects.get(id=id_open_date)
@@ -61,7 +65,7 @@ def schedule_appointment(request, id_open_date):
 
         return redirect(reverse('my-medical-appointments-view'))
     
-
+@login_required
 def my_medical_appointments(request):
     if request.method == 'GET':
         filter_by_specialties = request.GET.get('specialties')
@@ -72,7 +76,7 @@ def my_medical_appointments(request):
             medical_appointments = medical_appointments.filter(open_date__date__date=filter_by_date)
 
         if filter_by_specialties:
-            doctors = DoctorData.objects.filter(specialty__specialty__icontains=filter_by_specialties)
+            doctors = Doctor.objects.filter(specialty__specialty__icontains=filter_by_specialties)
             doctors_usernames = doctors.values_list('user__username', flat=True)
             
             medical_appointments = medical_appointments.filter(open_date__user__username__in=doctors_usernames)
@@ -85,17 +89,17 @@ def my_medical_appointments(request):
             'is_doctor': is_doctor(request.user)
             })
     
-
+@login_required
 def medical_appointment(request, id):
     medical_appointment = MedicalAppointment.objects.get(id=id)
-    doctor_data = DoctorData.objects.get(user=medical_appointment.open_date.user)
+    doctor_data = Doctor.objects.get(user=medical_appointment.open_date.user)
     
     return render(request, 'medical_appointment.html', {
         'medical_appointment': medical_appointment, 
         'doctor_data': doctor_data,
-        'is_medico': is_doctor(request.user)})
+        'is_doctor': is_doctor(request.user)})
 
-
+@login_required
 def cancel_medical_appointment(request, id):
     medical_appointment = MedicalAppointment.objects.get(id=id)
     medical_appointment.status = 'cancelled'

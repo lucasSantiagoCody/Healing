@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .validations import validate
+from .validations import validate_signup_request_data
 from django.views.generic import View
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -8,24 +8,20 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser
 
-def sign_up_view(request):
+def signup_view(request):
     
     if request.method == 'GET':   
         return render(request, 'sign_up.html')
     
     elif request.method == 'POST':
         
-        validate_request = validate(request.POST)
+        validation_errors = validate_signup_request_data(request)
         
-        if validate_request['exceptions']:
-
-            for execption in validate_request['exceptions']:
-                messages.add_message(request, constants.ERROR, execption)
-
+        if validation_errors:
+            for v_error in validation_errors:
+                messages.add_message(request, constants.ERROR, v_error)
             return redirect(reverse('sign-up-view'))
-        
         else:
-
             try:
                 email = request.POST.get('email')
                 username = request.POST.get('username')
@@ -40,7 +36,6 @@ def sign_up_view(request):
             except Exception as err:
                 print(err)
                 messages.add_message(request, constants.ERROR, 'Internal error system')
-                return redirect(reverse('login-view'))
 
             return redirect(reverse('login-view'))
         
@@ -60,7 +55,7 @@ def login_view(request):
         else:
             verify_email_exists = CustomUser.objects.filter(email=email)
             if verify_email_exists:
-                messages.add_message(request, constants.ERROR, 'Incorrect password!')
+                messages.add_message(request, constants.ERROR, 'Wrong password!')
             else:
                 messages.add_message(request, constants.ERROR, 'This account does not exist!')
         return redirect(reverse('home-view'))

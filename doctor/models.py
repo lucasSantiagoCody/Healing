@@ -11,7 +11,7 @@ class Specialty(models.Model):
         return self.specialty
     
 
-class DoctorData(models.Model):
+class Doctor(models.Model):
     medical_reservation_registration = models.CharField(max_length=30)
     doctor_name = models.CharField(max_length=100)
     address_code = models.CharField(max_length=15)
@@ -30,7 +30,7 @@ class DoctorData(models.Model):
 
     @property
     def next_date(self):
-        next_date = OpenDate.objects.filter(user=self.user
+        next_date = OpenDate.objects.filter(doctor=self.user.id
         ).filter(date__gt=datetime.now()).filter(scheduled=False
         ).order_by('date').first()
 
@@ -41,8 +41,7 @@ class DoctorData(models.Model):
     
 class OpenDate(models.Model):
     date = models.DateTimeField()
-    # TODO quem abri uma data é o médico
-    user = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    doctor = models.ForeignKey(Doctor, on_delete=models.DO_NOTHING)
     scheduled = models.BooleanField(default=False) 
 
     def __str__(self):

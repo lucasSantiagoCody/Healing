@@ -1,9 +1,9 @@
-from .models import DoctorData
+from .models import Doctor
 import re
 
 # TODO usar as permissions
 def is_doctor(user):
-    return DoctorData.objects.filter(user=user).exists()
+    return Doctor.objects.filter(user=user).exists()
 
 def validate_doctor_data(request_data):
     

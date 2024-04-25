@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Specialty, DoctorData, OpenDate, Document
+from .models import Specialty, Doctor, OpenDate, Document
 from django.contrib import messages
 from django.contrib.messages import constants
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from patient.models import MedicalAppointment
 from .validations import is_doctor, validate_doctor_data
-# view cadastro medico
+
+
 
 @login_required
 def register_doctor(request):
@@ -42,7 +43,7 @@ def register_doctor(request):
             consultation_fee = request.POST.get('consultation_fee')
 
             try:
-                doctor = DoctorData(
+                doctor = Doctor(
                     medical_reservation_registration=medical_reservation_registration,
                     doctor_name=doctor_name,
                     address_code=address_code,
@@ -58,7 +59,6 @@ def register_doctor(request):
                     consultation_fee=consultation_fee
                 )
                 doctor.save()
-
                 messages.add_message(request, constants.SUCCESS, 'Cadastro médico realizado com sucesso.')  
                    
                 return redirect(reverse('open-schedules-view'))
@@ -88,7 +88,7 @@ def open_schedules(request):
         return redirect(reverse('logout-view'))
     
     if request.method == 'GET':
-        doctor_data = DoctorData.objects.get(user=request.user)
+        doctor_data = Doctor.objects.get(user=request.user)
         open_dates = OpenDate.objects.filter(user=request.user)
         return render(request, 'open_schedules.html', {
             'doctor_data': doctor_data, 
@@ -157,7 +157,7 @@ def medical_appointment_doctor_area(request, id):
     if request.method == 'GET':
         context = {}
         context['medical_appointment'] = MedicalAppointment.objects.get(id=id)
-        context['doctor_data'] = DoctorData.objects.get(user=request.user)
+        context['doctor_data'] = Doctor.objects.get(user=request.user)
         context['documents'] = Document.objects.filter(medical_appointment=id)
         context['is_doctor'] = is_doctor(request.user)
         return render(request, 'medical_appointment_doctor_area.html', context)
