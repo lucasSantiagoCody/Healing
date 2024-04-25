@@ -3,8 +3,10 @@ import re
 
 # TODO usar as permissions
 def is_doctor(user):
-    return Doctor.objects.filter(user=user).exists()
-
+    if user.is_authenticated:
+        return Doctor.objects.filter(user=user).exists()
+    else:
+        return None
 def validate_doctor_data(request_data):
     
     validation_errors = {}

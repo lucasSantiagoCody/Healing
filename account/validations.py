@@ -11,11 +11,11 @@ def validate_signup_request_data(request):
     password = data['password'].strip()
     confirm_password = data['password_confirm'].strip()
     validation_errors = []
-    valid_email = "r[1]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+    valid_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
     
     if not email:
         validation_errors.append('The E-mail field should not be empty')
-    if not re.serach(valid_email, email):
+    if not re.search(valid_email, email):
         validation_errors.append('This E-mail is invalid!')
     if not username:
         validation_errors.append('The username field should not be empty')

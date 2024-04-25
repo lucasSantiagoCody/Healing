@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@login_required
 def home(request):
 
     if request.method == 'GET':
@@ -28,7 +27,7 @@ def home(request):
         return render(request, 'home.html', {
             'doctors': doctors, 
             'specialties': specialties,
-            'is_doctor': is_doctor(request.user)
+            # 'is_doctor': is_doctor(request.user)
         })
     
 @login_required

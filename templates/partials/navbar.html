@@ -38,5 +38,16 @@
                 {% endif %}
             </ul>
         </div>
+        <div class="d-left">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout-view' %}">
+                    <button class="btn btn-danger"><i class="fa-solid fa-delete-left"></i></i> Sair</button>
+                </a>
+            {% else %}
+                <a href="{% url 'login-view' %}">
+                    <button class="btn btn-success"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>
+                </a>
+            {% endif %}
+        </div>
     </div>
 </nav>
