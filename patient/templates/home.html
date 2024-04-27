@@ -19,8 +19,11 @@
 <div class="container mb-5">
     <div class="row">
         <div class="col-md-8">
-
-            <p style="font-size: 25px" class="p-bold">Olá, <span class="color-dark">{{request.user.username}}.</span></p>
+            {% if user.is_authenticated %}
+            <p style="font-size: 25px;" class="p-bold">Olá, <span class="color-dark">{{request.user.username}}.</span></p>
+            {% else %}
+            <p style="font-size: 35px;" class="p-bold">Faça o login</p>
+            {% endif %}
             <form action="{% url 'home-view' %}" method="GET">
                 {% csrf_token %}
                 <input type="text" class="form-control shadow-main-color" placeholder="Busque por profissionais ..." name="doctor_name">
