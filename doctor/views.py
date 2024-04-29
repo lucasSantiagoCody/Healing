@@ -4,16 +4,17 @@ from .models import Specialty, Doctor, OpenDate, Document
 from django.contrib import messages
 from django.contrib.messages import constants
 from datetime import datetime, timedelta
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from patient.models import MedicalAppointment
 from .validations import is_doctor, validate_doctor_data
-
-
+from django.contrib.auth.models import Group
+from .decorators import doctor_required
 
 @login_required
 def register_doctor(request):
-
-    if is_doctor(request.user):
+     
+    is_doctor = Doctor.objects.filter(user__id=request.user.id).exists
+    if is_doctor:
             messages.add_message(request, constants.WARNING, 'Você já está cadastrado como médico.')
             return redirect(reverse('open-schedules-view'))
     
@@ -58,9 +59,11 @@ def register_doctor(request):
                     specialty_id=specialty_id,
                     consultation_fee=consultation_fee
                 )
+                doctor_group, created = Group.objects.get_or_create(name='Doctor')
+                user = request.user
+                user.groups.add(doctor_group)
                 doctor.save()
                 messages.add_message(request, constants.SUCCESS, 'Cadastro médico realizado com sucesso.')  
-                   
                 return redirect(reverse('open-schedules-view'))
             except Exception as err:
                 print(err)
@@ -79,17 +82,13 @@ def register_doctor(request):
 
     
     
-# view abrir horarios
 @login_required
+@doctor_required
 def open_schedules(request):
-     
-    if not is_doctor(request.user):
-        messages.add_message(request, constants.ERROR, 'Somente médicos podem acessar esta página.')
-        return redirect(reverse('logout-view'))
-    
+
     if request.method == 'GET':
         doctor_data = Doctor.objects.get(user=request.user)
-        open_dates = OpenDate.objects.filter(user=request.user)
+        open_dates = OpenDate.objects.filter(doctor__id=request.user.id)
         return render(request, 'open_schedules.html', {
             'doctor_data': doctor_data, 
             'open_dates': open_dates,
@@ -115,11 +114,8 @@ def open_schedules(request):
         
 
 @login_required
+@doctor_required
 def doctors_medical_appointments(request):
-
-    if not is_doctor(request.user):
-        messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
-        return redirect(reverse('logout-view'))
 
     if request.method == 'GET':
         today = datetime.now().date()
@@ -127,7 +123,7 @@ def doctors_medical_appointments(request):
         filter_by_specialties = request.GET.get('specialties')
         filter_by_date = request.GET.get('date')
 
-        doctors_medical_appointments_today = MedicalAppointment.objects.filter(open_date__user=request.user
+        doctors_medical_appointments_today = MedicalAppointment.objects.filter(open_date__doctor__id=request.user.id
         ).filter(open_date__date__gt=today
         ).filter(open_date__date__lt=today + timedelta(days=1))
         
@@ -148,12 +144,9 @@ def doctors_medical_appointments(request):
             'is_doctor': is_doctor(request.user)
         })
     
-def medical_appointment_doctor_area(request, id):
-
-    if not is_doctor(request.user):
-        messages.add_message(request, constants.ERROR, 'Somente médicos podem acessar esta página.')
-        return redirect(reverse('logout-view'))
-    
+@login_required
+@doctor_required
+def medical_appointment_doctor_area(request, id):   
     if request.method == 'GET':
         context = {}
         context['medical_appointment'] = MedicalAppointment.objects.get(id=id)
@@ -182,14 +175,10 @@ def medical_appointment_doctor_area(request, id):
 
 
 
-
+@login_required
+@doctor_required
 def add_document(request, id):
-    if not is_doctor(request.user):
-        messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar essa página.')
-
     medical_appointment = MedicalAppointment.objects.get(id=id)
-
-
     if medical_appointment.open_date.user != request.user:
         messages.add_message(request, constants.ERROR, 'Essa consulta não é sua!')
         return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))
@@ -210,8 +199,8 @@ def add_document(request, id):
 
     return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))
 
-def complete_medical_appointment(request, id):
 
+def complete_medical_appointment(request, id):
     if not is_doctor(request.user):
         messages.add_message(request, constants.ERROR, 'Somente medícos podem finalizar consultas')
         return redirect(reverse('logout-view'))

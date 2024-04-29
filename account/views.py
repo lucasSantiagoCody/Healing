@@ -51,13 +51,14 @@ def login_view(request):
 
         if user:
             login(request, user)
-            messages.add_message(request, constants.SUCCESS, 'Now, Are you loggedin :)')
         else:
             verify_email_exists = CustomUser.objects.filter(email=email)
             if verify_email_exists:
                 messages.add_message(request, constants.ERROR, 'Wrong password!')
             else:
                 messages.add_message(request, constants.ERROR, 'This account does not exist!')
+
+            return redirect(reverse('login-view'))
         return redirect(reverse('home-view'))
 
 def logout_view(request):
