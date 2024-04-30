@@ -65,7 +65,7 @@ def schedule_appointment(request, id_open_date):
         return redirect(reverse('my-medical-appointments-view'))
     
 @login_required
-def my_medical_appointments(request):
+def patient_medical_appointments(request):
     if request.method == 'GET':
         filter_by_specialties = request.GET.get('specialties')
         filter_by_date = request.GET.get('date')
@@ -81,7 +81,7 @@ def my_medical_appointments(request):
             medical_appointments = medical_appointments.filter(open_date__user__username__in=doctors_usernames)
         
         
-        return render(request, 'my_medical_appointments.html', {
+        return render(request, 'patient_medical_appointments.html', {
             'medical_appointments': medical_appointments,
             'is_doctor': is_doctor(request.user)
             })

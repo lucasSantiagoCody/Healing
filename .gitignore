@@ -1,3 +1,8 @@
 media
 venv
 db.sqlite3
+patient/__pycache__
+account/__pycache__
+doctor/__pycache__
+core/__pycache__
+/__pycache__
