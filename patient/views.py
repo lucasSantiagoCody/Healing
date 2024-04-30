@@ -27,7 +27,7 @@ def home(request):
         return render(request, 'home.html', {
             'doctors': doctors, 
             'specialties': specialties,
-            # 'is_doctor': is_doctor(request.user)
+            'is_doctor': is_doctor(request.user)
         })
     
 @login_required
@@ -35,7 +35,7 @@ def choose_time(request, id_doctor):
     
     if request.method == 'GET':
         doctor = Doctor.objects.get(id=id_doctor)
-        open_schedules = OpenDate.objects.filter(user=request.user).filter(date__gte=datetime.now()).filter(scheduled=False)
+        open_schedules = OpenDate.objects.filter(doctor__id=request.user.id).filter(date__gte=datetime.now()).filter(scheduled=False)
         return render(request, 'choose_time.html', {
             'doctor': doctor, 
             'open_schedules': open_schedules,
@@ -79,8 +79,6 @@ def my_medical_appointments(request):
             doctors_usernames = doctors.values_list('user__username', flat=True)
             
             medical_appointments = medical_appointments.filter(open_date__user__username__in=doctors_usernames)
-            
-
         
         
         return render(request, 'my_medical_appointments.html', {

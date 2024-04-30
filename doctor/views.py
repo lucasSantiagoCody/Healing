@@ -10,6 +10,7 @@ from .validations import is_doctor, validate_doctor_data
 from django.contrib.auth.models import Group
 from .decorators import doctor_required
 
+
 @login_required
 def register_doctor(request):
      
@@ -85,10 +86,10 @@ def register_doctor(request):
 @login_required
 @doctor_required
 def open_schedules(request):
-
+    doctor = Doctor.objects.get(user=request.user)
     if request.method == 'GET':
         doctor_data = Doctor.objects.get(user=request.user)
-        open_dates = OpenDate.objects.filter(doctor__id=request.user.id)
+        open_dates = OpenDate.objects.filter(doctor=doctor)
         return render(request, 'open_schedules.html', {
             'doctor_data': doctor_data, 
             'open_dates': open_dates,
@@ -106,7 +107,7 @@ def open_schedules(request):
             
             open_date = OpenDate(
                 date=date,
-                user=request.user
+                doctor=doctor
             )
             open_date.save()
             messages.add_message(request, constants.SUCCESS, 'Horário cadastrado com sucesso.')
