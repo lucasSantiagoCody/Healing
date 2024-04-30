@@ -7,6 +7,7 @@ from django.contrib.messages import constants
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser
+from django.contrib.auth.models import Group
 
 def signup_view(request):
     
@@ -26,11 +27,16 @@ def signup_view(request):
                 email = request.POST.get('email')
                 username = request.POST.get('username')
                 password = request.POST.get('password')
+                be_patient = request.POST.get('be_patient')
+                
                 user = CustomUser.objects.create_user(
                     email=email,
                     password=password,
                     username=username
                 )
+                if be_patient:
+                    group = Group.objects.get(name='Patient')
+                    user.groups.add(group)
                 user.save()
                 messages.add_message(request, constants.SUCCESS, 'Successfully created account')
             except Exception as err:
