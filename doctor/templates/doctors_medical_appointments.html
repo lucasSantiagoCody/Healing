@@ -43,8 +43,8 @@
      </form>
 
         <br>
-        
         <h2><span class="color-dark">Hoje</span></h2>
+        {% if doctors_medical_appointments_today %}
         <div class="list-minhas-consultas">
             <table class="table">
                 <thead>
@@ -66,10 +66,16 @@
               </table>
 
         </div>
+        {% else %}
+        <div>
+            <h2 class="text-danger text-center">Não foram encontradas as consultas de hoje</h2>
+        </div>
+        {% endif %}
         <hr>
         
 
         <h2><span class="color-dark">Restantes</span></h2>
+        {% if remaining_doctors_medical_appointments %}
         <div class="list-minhas-consultas">
             <table class="table">
                 <thead>
@@ -89,9 +95,12 @@
                     {% endfor %}
                 </tbody>
               </table>
-
         </div>
-
+        {% else %}
+        <div>
+            <h2 class="text-center text-danger">Não foram encontradas as consultas restantes</h2>
+        </div>
+        {% endif %}
 
     </div>
     <br>

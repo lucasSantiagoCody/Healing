@@ -30,9 +30,12 @@ class Doctor(models.Model):
 
     @property
     def next_date(self):
-        next_date = OpenDate.objects.filter(doctor=self.user.id
-        ).filter(date__gt=datetime.now()).filter(scheduled=False
-        ).order_by('date').first()
+        # next_date = OpenDate.objects.filter(doctor_id=self.user.id
+        # ).filter(date__gte=datetime.now()).filter(scheduled=False
+        # ).order_by('date').first()
+        print(self.user)
+        next_date = OpenDate.objects.filter(doctor=self.id).filter(scheduled=False
+        ).filter(date__gt=datetime.now()).first()
 
         return next_date
     

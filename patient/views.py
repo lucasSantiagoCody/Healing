@@ -31,11 +31,12 @@ def home(request):
         })
     
 @login_required
-def choose_time(request, id_doctor):
+def choose_time(request, doctor_id):
     
     if request.method == 'GET':
-        doctor = Doctor.objects.get(id=id_doctor)
-        open_schedules = OpenDate.objects.filter(doctor__id=request.user.id).filter(date__gte=datetime.now()).filter(scheduled=False)
+        doctor = Doctor.objects.get(id=doctor_id)
+        open_schedules = OpenDate.objects.filter(doctor=doctor_id).filter(date__gte=datetime.now()).filter(scheduled=False)
+        
         return render(request, 'choose_time.html', {
             'doctor': doctor, 
             'open_schedules': open_schedules,
@@ -47,7 +48,6 @@ def choose_time(request, id_doctor):
 def schedule_appointment(request, id_open_date):
     if request.method == 'GET':
         open_date = OpenDate.objects.get(id=id_open_date)
-        print(open_date)
         
         try:
             schedule_appointment = MedicalAppointment(patient=request.user, open_date=open_date)
@@ -61,8 +61,9 @@ def schedule_appointment(request, id_open_date):
         except:
             messages.add_message(request,  constants.ERROR, 'Não foi possível agendar o horário.')
         
+            return redirect(reverse('choose_time', kwargs={'doctor_id'}))
 
-        return redirect(reverse('my-medical-appointments-view'))
+        return redirect(reverse('patient-medical-appointments-view'))
     
 @login_required
 def patient_medical_appointments(request):
@@ -89,7 +90,7 @@ def patient_medical_appointments(request):
 @login_required
 def medical_appointment(request, id):
     medical_appointment = MedicalAppointment.objects.get(id=id)
-    doctor_data = Doctor.objects.get(user=medical_appointment.open_date.user)
+    doctor_data = Doctor.objects.get(id=medical_appointment.open_date.doctor_id)
     
     return render(request, 'medical_appointment.html', {
         'medical_appointment': medical_appointment, 

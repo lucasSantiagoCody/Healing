@@ -43,9 +43,12 @@
                 </div>
                 <div>
                     {% if  medical_appointment.status != 'completed' and medical_appointment.status != 'cancelled'  %}
+                    <div class="mt-4">
                         <a href="{% url 'cancel-medical-appointment-view' medical_appointment.id %}">
                             <button class="btn btn-danger">Cancelar consulta</button>
                         </a>
+                    </div>    
+                    
                     {% endif %}
                 </div>
             </div>
