@@ -200,14 +200,11 @@ def add_document(request, id):
 
     return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))
 
-
-def complete_medical_appointment(request, id):
-    if not is_doctor(request.user):
-        messages.add_message(request, constants.ERROR, 'Somente medícos podem finalizar consultas')
-        return redirect(reverse('logout-view'))
-    
+@login_required
+@doctor_required
+def finish_medical_appointment(request, id):
     medical_appointment = MedicalAppointment.objects.get(id=id)
-    if request.user != medical_appointment.open_date.user:
+    if request.user.id != medical_appointment.open_date.doctor.user.id:
         messages.add_message(request, constants.ERROR, 'Essa consulta não é sua')
         return redirect(reverse('open-schedules-view'))
     
