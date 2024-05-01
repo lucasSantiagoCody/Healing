@@ -8,7 +8,7 @@ from account.models import CustomUser
 class MedicalAppointment(models.Model):
     STATUS_CHOICES = (
         ('scheduled', 'Scheduled'),
-        ('completed', 'Completed'),
+        ('finished', 'Finished'),
         ('cancelled', 'Cancelled'),
         ('started', 'Started')
     )

@@ -164,7 +164,7 @@ def medical_appointment_doctor_area(request, id):
 
         if medical_appointment.status == 'cancelled':
             messages.add_message(request, constants.WARNING, 'Essa consulta já foi cancelada, você não pode inicia-la')
-        elif medical_appointment.status == "completed":
+        elif medical_appointment.status == "finished":
             messages.add_message(request, constants.WARNING, 'Essa consulta já foi finalizada, você não pode inicia-la')
         else:
             medical_appointment.link = link
@@ -208,6 +208,6 @@ def finish_medical_appointment(request, id):
         messages.add_message(request, constants.ERROR, 'Essa consulta não é sua')
         return redirect(reverse('open-schedules-view'))
     
-    medical_appointment.status = 'completed'
+    medical_appointment.status = 'finished'
     medical_appointment.save()
     return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))

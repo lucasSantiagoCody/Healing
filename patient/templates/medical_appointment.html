@@ -20,7 +20,7 @@
         </div>
     {% endif %}
 
-    {% if medical_appointment.status == 'completed' %}
+    {% if medical_appointment.status == 'finished' %}
             <div class="alert alert-success mb-4" role="alert">
                 Consulta Finalizada
             </div>
@@ -42,7 +42,7 @@
                     <p class="p-bold">{{medical_appointment.open_date.date}}</p>
                 </div>
                 <div>
-                    {% if  medical_appointment.status != 'completed' and medical_appointment.status != 'cancelled'  %}
+                    {% if  medical_appointment.status != 'finished' and medical_appointment.status != 'cancelled'  %}
                     <div class="mt-4">
                         <a href="{% url 'cancel-medical-appointment-view' medical_appointment.id %}">
                             <button class="btn btn-danger">Cancelar consulta</button>
@@ -59,7 +59,7 @@
                     <p><i class="color-dark bi bi-check-circle-fill"></i> Consulta agendada</p>
                 </div>
                 <div class="col-md">
-                    <p><i class="{% if medical_appointment.status == 'completed' %}color-dark{% endif %}
+                    <p><i class="{% if medical_appointment.status == 'finished' %}color-dark{% endif %}
                         bi bi-check-circle-fill"></i> Consulta realizada</p>
                 </div>
                 <div class="col-md">
