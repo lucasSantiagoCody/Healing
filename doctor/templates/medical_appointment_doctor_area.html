@@ -11,7 +11,7 @@
 {% block 'content' %}
 {% include "partials/navbar.html" %}
 <br><br>
-<div class="container">
+<div class="container mb-5">
     <div class="row">
         <div class="col-md-8">
             {% if medical_appointment.status == 'cancelled' %}
@@ -85,9 +85,9 @@
             <h3 class="p-bold">Documentos do paciente</h3>
             <form action="{% url 'add-document-view' medical_appointment.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="text" name="title" class="form-control" placeholder="Titulo ...">
+                <input type="text" required name="title" class="form-control" placeholder="Titulo ...">
                 <br>
-                <input type="file" name="document" class="form-control">
+                <input type="file" required name="document" class="form-control">
                 <br>
                 <input type="submit" class="btn btn-dark-color-outline btn-lg" value="+">
             </form>

@@ -1,11 +1,4 @@
-from .models import Doctor
 import re
-
-def is_doctor(user):
-    if user.is_authenticated:
-        return Doctor.objects.filter(user=user).exists()
-    else:
-        return None
     
 def validate_doctor_data(request_data):
     
@@ -59,6 +52,25 @@ def validate_doctor_data(request_data):
           and validation_errors['empty_fields'] == []  \
           and validation_errors['invalid_integer_fields'] == [] \
           and validation_errors['invalid_file_extension_fields'] == []:
-        return None
+        return 'validated'
     
     return validation_errors
+
+
+def validate_add_document_request_data(request):
+    title = request.POST.get('title')
+    document = request.FILES.get('document')
+    validation_errors = {'title': '', 'document': ''}
+
+    if not title:
+        validation_errors['title'] = 'invalid'
+    if not document:
+        validation_errors['document'] = 'invalid'
+    else:
+        if not document.name.endswith(('.pdf', '.doc', '.docx', '.txt')):
+            validation_errors['document'] = 'invalid'
+
+    if validation_errors['title'] == '' and validation_errors['document'] == '':
+        return 'validated'
+    return validation_errors
+    

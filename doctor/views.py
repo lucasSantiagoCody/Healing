@@ -6,7 +6,8 @@ from django.contrib.messages import constants
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required, permission_required
 from patient.models import MedicalAppointment
-from .validations import is_doctor, validate_doctor_data
+from .validations import validate_add_document_request_data, validate_doctor_data
+from .utils import is_doctor
 from django.contrib.auth.models import Group
 from .decorators import doctor_required
 
@@ -180,25 +181,35 @@ def medical_appointment_doctor_area(request, id):
 @doctor_required
 def add_document(request, id):
     medical_appointment = MedicalAppointment.objects.get(id=id)
-    if medical_appointment.open_date.user != request.user:
+
+    if medical_appointment.open_date.doctor.user.id != request.user.id:
         messages.add_message(request, constants.ERROR, 'Essa consulta não é sua!')
         return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))
     
-    title = request.POST.get('title')
-    document = request.FILES.get('document')
+    
 
-    if document:
-        document = Document(
-            medical_appointment=medical_appointment,
-            title=title,
-            document=document
-        )
-        document.save()
-        messages.add_message(request, constants.SUCCESS, 'Documento enviado com sucesso!')
+    validate_request_data = validate_add_document_request_data(request)
+    print(validate_request_data)
+    if validate_request_data == 'validated':
+            title = request.POST.get('title')
+            document = request.FILES.get('document')
+            try:
+                document = Document(
+                    medical_appointment=medical_appointment,
+                    title=title,
+                    document=document
+                )
+                document.save()
+                messages.add_message(request, constants.SUCCESS, 'Documento enviado com sucesso!')
+            except:
+                messages.add_message(request, constants.ERROR, 'Não foi possível enviar o documento')
     else:
-        messages.add_message(request, constants.WARNING, 'Adicione o documento.')
+        if validate_request_data['title'] == 'invalid':
+            messages.add_message(request, constants.WARNING, 'Adicione o titulo do documento.')
+        if validate_request_data['document'] == 'invalid':
+            messages.add_message(request, constants.WARNING, 'Adicione um  documento valido.')
 
-    return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id':id}))
+    return redirect(reverse('medical-appointment-doctor-area-view', kwargs={'id': id}))
 
 @login_required
 @doctor_required

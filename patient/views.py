@@ -5,7 +5,7 @@ from .models import MedicalAppointment
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.messages import constants
-from doctor.validations import is_doctor
+from doctor.utils import is_doctor
 from django.contrib.auth.decorators import login_required
 
 
