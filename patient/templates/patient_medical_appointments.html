@@ -36,28 +36,33 @@
         </form>
 
         <br>
+        {% if medical_appointments %}
+            <div class="list-minhas-consultas">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Médico</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Data</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for medical_appointment in medical_appointments  %}
+                            <tr>
+                                <td><a href="{% url 'medical-appointment-view' medical_appointment.id %}">Dr(a). {{medical_appointment.open_date.user.username}}</a></td>
+                                <td>{{medical_appointment.get_status_display}}</td>
+                                <td>{{medical_appointment.open_date.date}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-        <div class="list-minhas-consultas">
-            <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Médico</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Data</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {% for medical_appointment in medical_appointments  %}
-                        <tr>
-                            <td><a href="{% url 'medical-appointment-view' medical_appointment.id %}">Dr(a). {{medical_appointment.open_date.user.username}}</a></td>
-                            <td>{{medical_appointment.get_status_display}}</td>
-                            <td>{{medical_appointment.open_date.date}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-              </table>
-
-        </div>
+            </div>
+        {% else %}
+            <div>
+                <h2 class="text-center text-danger mt-5">Não foram encontradas as consultas</h2>
+            </div>
+        {% endif %}
 
 
     </div>
