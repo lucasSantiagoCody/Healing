@@ -45,17 +45,17 @@ def choose_time(request, doctor_id):
         
 
 @login_required
-def schedule_appointment(request, id_open_date):
+def schedule_medical_appointment(request, id_open_date):
     if request.method == 'GET':
         open_date = OpenDate.objects.get(id=id_open_date)
         
         try:
-            schedule_appointment = MedicalAppointment(patient=request.user, open_date=open_date)
-            schedule_appointment.save()
+            schedule_medical_appointment = MedicalAppointment(patient=request.user, open_date=open_date)
+            schedule_medical_appointment.status = 'scheduled'
+            schedule_medical_appointment.save()
 
-            if schedule_appointment:
-                open_date.scheduled = True
-                open_date.save()
+            open_date.scheduled = True
+            open_date.save()
 
             messages.add_message(request,  constants.SUCCESS, 'Horário agendado com sucesso.')
         except:
@@ -72,15 +72,16 @@ def patient_medical_appointments(request):
         filter_by_date = request.GET.get('date')
 
         medical_appointments = MedicalAppointment.objects.filter(patient=request.user)
+
         if filter_by_date:
             medical_appointments = medical_appointments.filter(open_date__date__date=filter_by_date)
 
         if filter_by_specialties:
-            doctors = Doctor.objects.filter(specialty__specialty__icontains=filter_by_specialties)
-            doctors_usernames = doctors.values_list('user__username', flat=True)
+            doctors_id = Doctor.objects.filter(specialty__specialty__icontains=filter_by_specialties
+            ).values_list('user__id', flat=True)
+            # doctors_id = doctors.values_list('user__id', flat=True)
+            medical_appointments = medical_appointments.filter(open_date__doctor__id__in=doctors_id)
             
-            medical_appointments = medical_appointments.filter(open_date__user__username__in=doctors_usernames)
-        
         
         return render(request, 'patient_medical_appointments.html', {
             'medical_appointments': medical_appointments,
