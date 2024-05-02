@@ -3,8 +3,6 @@ import re
 def validate_doctor_data(request_data):
     
     validation_errors = {}
-    print(request_data.POST)
-    print(request_data.FILES)
     # request post
     required_post_fields = [
         'medical_reservation_registration',

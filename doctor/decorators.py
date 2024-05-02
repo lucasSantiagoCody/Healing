@@ -12,6 +12,6 @@ def doctor_required(view_func):
             return view_func(request, *args, **kwargs)
         else:
             messages.add_message(request, constants.ERROR, 'Somente médicos podem acessar esta página')
-            return redirect(reverse('login-view'))
+            return redirect(reverse('logout-view'))
         
     return wrapper

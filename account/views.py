@@ -5,7 +5,6 @@ from django.views.generic import View
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from .models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -63,8 +62,8 @@ def login_view(request):
                 messages.add_message(request, constants.ERROR, 'Wrong password!')
             else:
                 messages.add_message(request, constants.ERROR, 'This account does not exist!')
-
             return redirect(reverse('login-view'))
+        
         return redirect(reverse('home-view'))
 
 def logout_view(request):

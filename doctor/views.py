@@ -10,15 +10,17 @@ from .validations import validate_add_document_request_data, validate_doctor_dat
 from .utils import is_doctor
 from django.contrib.auth.models import Group
 from .decorators import doctor_required
-
+from patient.utils import is_patient
 
 @login_required
 def register_doctor(request):
      
-    is_doctor = Doctor.objects.filter(user__id=request.user.id).exists
-    if is_doctor:
+    if is_doctor(request.user):
             messages.add_message(request, constants.WARNING, 'Você já está cadastrado como médico.')
             return redirect(reverse('open-schedules-view'))
+    if is_patient(request.user):
+            messages.add_message(request, constants.WARNING, 'Pacientes não devem ser médicos.')
+            return redirect(reverse('home-view'))
     
     if request.method == 'GET':
         specialties =  Specialty.objects.all()
