@@ -4,10 +4,7 @@
 
 {% block 'head' %}
 
-    <link rel="stylesheet" href="{% static 'doctor/css/open_schedules.css' %}">
-    <link rel="stylesheet" href="{% static 'account/css/account.css' %}">
-    <link rel="stylesheet" href="{% static 'doctor/css/register_doctor.css' %}">
-    <link rel="stylesheet" href="{% static 'patient/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'general/css/table_medical_appointments.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 {% endblock 'head' %}
@@ -16,7 +13,7 @@
 {% include "partials/navbar.html" %}
 
 
-    <div class="container">
+    <div class="container mb-5">
         <br>
         <h2><span class="color-dark">Suas consultas</span></h2>
 
@@ -37,26 +34,33 @@
 
         <br>
         {% if medical_appointments %}
-            <div class="list-minhas-consultas">
+            <div class="table-medical-appointments">
+                <div class="col-9">
                 <table class="table">
                     <thead>
                     <tr>
                         <th scope="col">Médico</th>
                         <th scope="col">Status</th>
                         <th scope="col">Data</th>
+                        <th scope="col">Acções</th>
                     </tr>
                     </thead>
                     <tbody>
                         {% for medical_appointment in medical_appointments  %}
                             <tr>
-                                <td><a href="{% url 'medical-appointment-view' medical_appointment.id %}">Dr(a). {{medical_appointment.open_date.user.username}}</a></td>
+                                <td>Dr(a). {{medical_appointment.open_date.user.username}}</a></td>
                                 <td>{{medical_appointment.get_status_display}}</td>
                                 <td>{{medical_appointment.open_date.date}}</td>
+                                <td>
+                                    <a href="{% url 'medical-appointment-view' medical_appointment.id %}">
+                                        <button class="btn">Abrir consulta</button>
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
+            </div>
             </div>
         {% else %}
             <div>

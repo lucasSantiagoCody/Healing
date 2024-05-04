@@ -4,4 +4,7 @@ db.sqlite3
 patient/__pycache__
 account/__pycache__
 doctor/__pycache__
+doctor/migrations/__pycache__
+patient/migrations/__pycache__
+account/migrations/__pycache__
 core/__pycache__

@@ -1,0 +1,37 @@
+
+.table-medical-appointments{
+   
+    padding: 10px;
+    margin-top: 2%;
+    margin-left: -1%;
+}
+/* .table-medical-appointments table{
+    width: 90%;
+} */
+.table-medical-appointments .table th{
+    background: var(--main-color);
+    text-align: center;
+    padding: 1.5%;
+    color: white;
+}
+
+
+.table-medical-appointments .table td{
+    background-color: rgb(9, 39, 69);
+    text-align: center;
+    color: rgb(255, 255, 255);
+    padding: 2%;
+    font-size: 14pt;
+    /* box-shadow: 5px 1px 35px var(--main-color); */
+}
+
+
+.table-medical-appointments .table td button{
+    background-color: var(--dark-color);
+    color: white;
+}
+.table-medical-appointments .table td button:hover{
+    background-color: var(--main-color);
+    
+}
+
