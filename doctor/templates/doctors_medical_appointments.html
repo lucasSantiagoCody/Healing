@@ -50,14 +50,18 @@
                     <th scope="col">Paciente</th>
                     <th scope="col">Status</th>
                     <th scope="col">Data</th>
+                    <th scope="col">Acções</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for doctors_appointments in doctors_medical_appointments_today  %}
+                    {% for medical_appointment in doctors_medical_appointments_today  %}
                         <tr>
-                            <td><a href="{% url 'medical-appointment-doctor-area-view' doctors_appointments.id %}">{{doctors_appointments.patient.username}}</a></td>
-                            <td>{{doctors_appointments.get_status_display}}</td>
-                            <td>{{doctors_appointments.open_date.date}}</td>
+                            <td>{{medical_appointment.patient.username}}</td>
+                            <td>{{medical_appointment.get_status_display}}</td>
+                            <td>{{medical_appointment.open_date.date}}</td>
+                            <td><a href="{% url 'medical-appointment-doctor-area-view' medical_appointment.id %}">
+                                <button class="btn">Abrir consulta</button>
+                            </a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

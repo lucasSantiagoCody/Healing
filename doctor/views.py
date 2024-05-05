@@ -30,8 +30,8 @@ def register_doctor(request):
         })
     
     elif request.method == "POST":
-        validation_erorrs = validate_doctor_data(request)
-        if not validation_erorrs:
+        validated_request_data = validate_doctor_data(request)
+        if validated_request_data:
             medical_reservation_registration = request.POST.get('medical_reservation_registration')
             doctor_name = request.POST.get('doctor_name')
             address_code = request.POST.get('address_code')
@@ -72,15 +72,7 @@ def register_doctor(request):
             except Exception as err:
                 print(err)
                 messages.add_message(request, constants.ERROR, 'Não foi possível realizar o cadastro médico.')  
-        else:
-            # TODO analisar o que pode ser melhorado mais tarde
-            if validation_erorrs['required_fields_not_found'] != []:
-                messages.add_message(request, constants.ERROR, f"Required fields not found {str(validation_erorrs['required_fields_not_found']).replace("[", '').replace("]", '').replace("'", ' ')}")
-            if validation_erorrs['empty_fields'] != []:
-                messages.add_message(request, constants.ERROR, f"Empty fields {str(validation_erorrs['empty_fields']).replace("[", '').replace("]", '').replace("'", ' ')}" )
-            if validation_erorrs['invalid_file_extension_fields'] != []:
-                messages.add_message(request, constants.ERROR, f"Invalid file extension fields{str(validation_erorrs['invalid_file_extension_fields']).replace("[", '').replace("]", '').replace("'", ' ')}")
-            
+        
             
         return redirect(reverse('register-doctor-view'))
 
@@ -127,11 +119,11 @@ def doctors_medical_appointments(request):
         filter_by_specialties = request.GET.get('specialties')
         filter_by_date = request.GET.get('date')
 
-        doctors_medical_appointments_today = MedicalAppointment.objects.filter(open_date__doctor__id=request.user.id
+        doctors_medical_appointments_today = MedicalAppointment.objects.filter(open_date__doctor__user__id=request.user.id
         ).filter(open_date__date__gt=today
         ).filter(open_date__date__lt=today + timedelta(days=1))
         
-        remaining_doctors_medical_appointments = MedicalAppointment.objects.exclude(
+        remaining_doctors_medical_appointments = MedicalAppointment.objects.filter(open_date__doctor__user__id=request.user.id).exclude(
         id__in=doctors_medical_appointments_today.values('id'))
         
         if filter_by_date:

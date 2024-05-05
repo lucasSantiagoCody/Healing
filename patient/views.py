@@ -17,7 +17,7 @@ def home(request):
         specialties = Specialty.objects.all()
         filter_doctor = request.GET.get('doctor_name')
         filter_specialties = request.GET.getlist('specialty')
-
+        
         if filter_doctor:
             doctors = doctors.filter(doctor_name__icontains=filter_doctor)
 
@@ -25,10 +25,11 @@ def home(request):
             doctors = doctors.filter(specialty_id__in=filter_specialties)
             
         return render(request, 'home.html', {
-            'doctors': doctors, 
             'specialties': specialties,
-            'is_doctor': is_doctor(request.user)
-        })
+            'is_doctor': is_doctor(request.user),
+            'doctors': doctors, 
+        }
+        )
     
 @login_required
 def choose_time(request, doctor_id):
