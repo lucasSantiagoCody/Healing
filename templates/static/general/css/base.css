@@ -21,3 +21,7 @@
 .color-dark{
     color: var(--dark-color);
 }
+
+.icon-main{
+    color: var(--main-color);
+}

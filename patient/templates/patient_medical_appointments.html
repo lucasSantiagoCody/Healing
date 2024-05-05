@@ -48,7 +48,7 @@
                     <tbody>
                         {% for medical_appointment in medical_appointments  %}
                             <tr>
-                                <td>Dr(a). {{medical_appointment.open_date.user.username}}</a></td>
+                                <td>Dr(a). {{medical_appointment.open_date.doctor.user.username}}</a></td>
                                 <td>{{medical_appointment.get_status_display}}</td>
                                 <td>{{medical_appointment.open_date.date}}</td>
                                 <td>

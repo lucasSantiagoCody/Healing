@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 def home(request):
 
     if request.method == 'GET':
-        doctors = Doctor.objects.all()
+        doctors = Doctor.objects.all().exclude(user__id=request.user.id)
         specialties = Specialty.objects.all()
         filter_doctor = request.GET.get('doctor_name')
         filter_specialties = request.GET.getlist('specialty')
@@ -48,12 +48,19 @@ def choose_time(request, doctor_id):
 @login_required
 def schedule_medical_appointment(request, id_open_date):
     if request.method == 'GET':
-        open_date = OpenDate.objects.get(id=id_open_date)
+
+        check_doctor_who_opened_date = OpenDate.objects.filter(doctor__user__id=request.user.id
+                    ).values('doctor__user__id').first()
+
+        if check_doctor_who_opened_date == request.user.id:
+            messages.add_message(request, constants.WARNING, 'Doctores não devem agendar as suas próprias consultas')
+            return redirect(reverse('home-view'))
         
         try:
-            schedule_medical_appointment = MedicalAppointment(patient=request.user, open_date=open_date)
-            schedule_medical_appointment.status = 'scheduled'
-            schedule_medical_appointment.save()
+            open_date = OpenDate.objects.get(id=id_open_date)
+            medical_appointment = MedicalAppointment(patient=request.user, open_date=open_date)
+            medical_appointment.status = 'scheduled'
+            medical_appointment.save()
 
             open_date.scheduled = True
             open_date.save()
