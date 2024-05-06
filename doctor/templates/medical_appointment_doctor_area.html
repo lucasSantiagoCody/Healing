@@ -14,8 +14,8 @@
             <div class="alert alert-danger" role="alert">
                 Consulta cancelada
             </div>
-            {% elif medical_appointment.status == 'completed' %}
-            <div class="alert alert-success" role="alert">
+            {% elif medical_appointment.status == 'finished' %}
+            <div class="alert alert-warning text-center" role="alert">
                 Consulta Finalizada
             </div>
             {% elif medical_appointment.status == 'started' %}
@@ -35,19 +35,17 @@
                 <div class="col-md">
                     <p style="font-size: 20px" class="p-bold">Paciente {{medical_appointment.patient.username}} <i
                             class="bi bi-patch-check-fill icon-main"></i></p>
-                    <p>{{doctor_data.description}}</p>
-                    <p class="p-bold">{{medical_appointment.open_date.date}}</p>
+                    <p class="p-bold mt-3">{{medical_appointment.open_date.date}}</p>
                 </div>
             </div>
             <hr>
             <br>
             <div class="row">
                 <div class="col-md">
-
                     <p><i class="color-dark bi bi-check-circle-fill"></i> Consulta agendada</p>
                 </div>
                 <div class="col-md">
-                    <p><i class="{% if medical_appointment.status == 'completed' %}color-dark{% endif %} bi bi-check-circle-fill"></i>
+                    <p><i class="{% if medical_appointment.status == 'finished' %}color-dark{% endif %} bi bi-check-circle-fill"></i>
                         Consulta realizada</p>
                 </div>
                 <div class="col-md">
@@ -62,30 +60,24 @@
             <h3 class="p-bold">Como acessar ?</h3>
             <p>Adicione o link do google meet para iniciar a consulta</p>
             <form action="{% url 'medical-appointment-doctor-area-view' medical_appointment.id %}" method="POST">{% csrf_token %}
-                <input type="text" name="link" class="form-control shadow-main-color" id="" placeholder="Link ..."
+                <input 
+                type="text" name="link" class="form-control shadow-main-color" id="input-add-link" placeholder="Link ..."
                     value="">
                 <br>
-                <input type="submit" class="btn btn-success btn-dark-color btn-lg">
+                <input type="submit" id="btn-add-link" class="btn btn-success btn-dark-color btn-lg">
             </form>
-
-
-
             <hr>
-
-            <br>
-            <br>
-            <br>
-            <br>
         </div>
+
         <div class="col-md">
             <h3 class="p-bold">Documentos do paciente</h3>
             <form action="{% url 'add-document-view' medical_appointment.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <input type="text" required name="title" class="form-control" placeholder="Titulo ...">
+                <input type="text"  required name="title" id="input-document-title" class="form-control" placeholder="Titulo ...">
                 <br>
-                <input type="file" required name="document" class="form-control">
+                <input type="file" required name="document" id="input-document-file" class="form-control">
                 <br>
-                <input type="submit" class="btn btn-dark-color-outline btn-lg" value="+">
+                <input type="submit" id="btn-send-document" class="btn btn-outline-dark btn-lg" value="+">
             </form>
             <hr>
             <br>
@@ -100,9 +92,27 @@
             <br>
 
             <hr>
-            <a href="{% url 'finish-medical-appointment-view' medical_appointment.id %}" class="btn btn-primary">Finalizar consulta</a>
+            <button id="btn-finish-medical-appointment" class="btn btn-primary">
+                <a href="{% url 'finish-medical-appointment-view' medical_appointment.id %}" class="text-light">Finalizar consulta</a>
+            </button>
         </div>
     </div>
 
 </div>
 {% endblock 'content' %}
+{% block 'jsBlock' %}
+    <script src="{% static 'general/js/elements_disabler.js' %}" ></script>
+    {% if medical_appointment.status == 'finished'%}
+    <script>
+        disabler(
+            [
+                '#btn-send-document',
+                '#btn-add-link',
+                '#btn-finish-medical-appointment',
+                '#input-document-title',
+                '#input-document-file',
+                '#input-add-link'
+            ])
+    </script>
+    {% endif %}
+{% endblock 'jsBlock' %}

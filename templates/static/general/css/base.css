@@ -25,3 +25,8 @@
 .icon-main{
     color: var(--main-color);
 }
+
+
+a{
+    text-decoration: none;
+}
