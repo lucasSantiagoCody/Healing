@@ -12,6 +12,30 @@ from django.contrib.auth.models import Group
 from .decorators import doctor_required
 from patient.utils import is_patient
 
+
+
+
+def doctors(request):
+
+    if request.method == 'GET':
+        doctors = Doctor.objects.all().exclude(user__id=request.user.id)
+        specialties = Specialty.objects.all()
+        filter_doctor = request.GET.get('doctor_name')
+        filter_specialties = request.GET.getlist('specialty')
+        
+        if filter_doctor:
+            doctors = doctors.filter(doctor_name__icontains=filter_doctor)
+
+        if filter_specialties:
+            doctors = doctors.filter(specialty_id__in=filter_specialties)
+            
+        return render(request, 'doctors.html', {
+            'specialties': specialties,
+            'is_doctor': is_doctor(request.user),
+            'doctors': doctors, 
+        }
+        )
+
 @login_required
 def register_doctor(request):
      

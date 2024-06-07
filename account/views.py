@@ -39,8 +39,7 @@ def signup_view(request):
                 user.save()
                 messages.add_message(request, constants.SUCCESS, 'Successfully created account')
             except Exception as err:
-                print(err)
-                messages.add_message(request, constants.ERROR, 'Internal error system')
+                messages.add_message(request, constants.ERROR, 'Internal system error')
 
             return redirect(reverse('login-view'))
         

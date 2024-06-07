@@ -24,7 +24,7 @@ class Doctor(models.Model):
     medical_identity_card = models.ImageField(upload_to='medical_identity_cards')
     profile_picture = models.ImageField(upload_to='profile_pictures')
     description = models.TextField(null=True, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(CustomUser, on_delete=models.DO_NOTHING)
     specialty = models.ForeignKey(Specialty, on_delete=models.DO_NOTHING)
     consultation_fee = models.FloatField(default=100)
 

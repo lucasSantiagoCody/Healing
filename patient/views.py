@@ -11,25 +11,8 @@ from django.contrib.auth.decorators import login_required
 
 
 def home(request):
+    return render(request, 'home.html')
 
-    if request.method == 'GET':
-        doctors = Doctor.objects.all().exclude(user__id=request.user.id)
-        specialties = Specialty.objects.all()
-        filter_doctor = request.GET.get('doctor_name')
-        filter_specialties = request.GET.getlist('specialty')
-        
-        if filter_doctor:
-            doctors = doctors.filter(doctor_name__icontains=filter_doctor)
-
-        if filter_specialties:
-            doctors = doctors.filter(specialty_id__in=filter_specialties)
-            
-        return render(request, 'home.html', {
-            'specialties': specialties,
-            'is_doctor': is_doctor(request.user),
-            'doctors': doctors, 
-        }
-        )
     
 @login_required
 def choose_time(request, doctor_id):
@@ -49,10 +32,9 @@ def choose_time(request, doctor_id):
 def schedule_medical_appointment(request, id_open_date):
     if request.method == 'GET':
 
-        check_doctor_who_opened_date = OpenDate.objects.filter(doctor__user__id=request.user.id
-                    ).values('doctor__user__id').first()
+        check_doctor_opened_date = OpenDate.objects.filter(doctor__user__id=request.user.id).values('doctor__user__id').first()
 
-        if check_doctor_who_opened_date == request.user.id:
+        if check_doctor_opened_date == request.user.id:
             messages.add_message(request, constants.WARNING, 'Doctores não devem agendar as suas próprias consultas')
             return redirect(reverse('home-view'))
         

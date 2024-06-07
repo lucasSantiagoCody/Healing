@@ -17,6 +17,9 @@
     font-weight: bold;
 
 }
+.bg-main{
+    background-color: #00CCBE;
+}
 
 .color-dark{
     color: var(--dark-color);
