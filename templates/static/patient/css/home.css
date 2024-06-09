@@ -1,7 +1,6 @@
 .navbar{
-    height: 110px;
-    border-bottom: 14px solid var(--main-color);
-    background-color: white!important;
+    height: 10vh;
+    border-bottom: 4px solid var(--main-color);
     color: #000!important;
     padding: 2%;
 }
@@ -10,16 +9,15 @@
     font-size: 20pt;
 }
 
-.navbar .navbar-items span{
-    border-bottom: 4px solid var(--dark-color);
-}
+
 .navbar .navbar-items a{
     color: #000;
+    font-size: 14pt;
     margin-left: 2%;
     transition: 0s all;
 }
 .navbar .navbar-items a:hover{
-    border-bottom: 4px solid var(--dark-color);
+    color: var(--main-color);
     transition: ease-out all .1s; 
     -moz-transition: ease-in-out all .4s;
     -webkit-transition: ease-in-out all .4s;
